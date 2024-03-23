@@ -398,9 +398,6 @@ static int panel_edp_disable(struct drm_panel *panel)
 {
 	struct panel_edp *p = to_panel_edp(panel);
 
-	if (!p->enabled)
-		return 0;
-
 	if (p->desc->delay.disable)
 		msleep(p->desc->delay.disable);
 
@@ -425,10 +422,6 @@ static int panel_edp_unprepare(struct drm_panel *panel)
 {
 	struct panel_edp *p = to_panel_edp(panel);
 	int ret;
-
-	/* Unpreparing when already unprepared is a no-op */
-	if (!p->prepared)
-		return 0;
 
 	ret = pm_runtime_put_sync_suspend(panel->dev);
 	if (ret < 0)
@@ -548,10 +541,6 @@ static int panel_edp_prepare(struct drm_panel *panel)
 	struct panel_edp *p = to_panel_edp(panel);
 	int ret;
 
-	/* Preparing when already prepared is a no-op */
-	if (p->prepared)
-		return 0;
-
 	ret = pm_runtime_get_sync(panel->dev);
 	if (ret < 0) {
 		pm_runtime_put_autosuspend(panel->dev);
@@ -567,9 +556,6 @@ static int panel_edp_enable(struct drm_panel *panel)
 {
 	struct panel_edp *p = to_panel_edp(panel);
 	unsigned int delay;
-
-	if (p->enabled)
-		return 0;
 
 	delay = p->desc->delay.enable;
 
