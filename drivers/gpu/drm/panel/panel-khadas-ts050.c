@@ -584,9 +584,6 @@ static int khadas_ts050_panel_prepare(struct drm_panel *panel)
 	unsigned int i;
 	int err;
 
-	if (khadas_ts050->prepared)
-		return 0;
-
 	gpiod_set_value_cansleep(khadas_ts050->enable_gpio, 0);
 
 	err = regulator_enable(khadas_ts050->supply);
@@ -667,9 +664,6 @@ static int khadas_ts050_panel_unprepare(struct drm_panel *panel)
 	struct khadas_ts050_panel *khadas_ts050 = to_khadas_ts050_panel(panel);
 	int err;
 
-	if (!khadas_ts050->prepared)
-		return 0;
-
 	khadas_ts050->prepared = false;
 
 	err = mipi_dsi_dcs_enter_sleep_mode(khadas_ts050->link);
@@ -701,9 +695,6 @@ static int khadas_ts050_panel_disable(struct drm_panel *panel)
 {
 	struct khadas_ts050_panel *khadas_ts050 = to_khadas_ts050_panel(panel);
 	int err;
-
-	if (!khadas_ts050->enabled)
-		return 0;
 
 	err = mipi_dsi_dcs_set_display_off(khadas_ts050->link);
 	if (err < 0)

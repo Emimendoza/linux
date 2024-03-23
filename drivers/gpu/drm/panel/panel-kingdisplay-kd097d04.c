@@ -185,9 +185,6 @@ static int kingdisplay_panel_disable(struct drm_panel *panel)
 	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
 	int err;
 
-	if (!kingdisplay->enabled)
-		return 0;
-
 	err = mipi_dsi_dcs_set_display_off(kingdisplay->link);
 	if (err < 0)
 		dev_err(panel->dev, "failed to set display off: %d\n", err);
@@ -201,9 +198,6 @@ static int kingdisplay_panel_unprepare(struct drm_panel *panel)
 {
 	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
 	int err;
-
-	if (!kingdisplay->prepared)
-		return 0;
 
 	err = mipi_dsi_dcs_enter_sleep_mode(kingdisplay->link);
 	if (err < 0) {
@@ -230,9 +224,6 @@ static int kingdisplay_panel_prepare(struct drm_panel *panel)
 	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
 	int err, regulator_err;
 	unsigned int i;
-
-	if (kingdisplay->prepared)
-		return 0;
 
 	gpiod_set_value_cansleep(kingdisplay->enable_gpio, 0);
 
@@ -292,9 +283,6 @@ poweroff:
 static int kingdisplay_panel_enable(struct drm_panel *panel)
 {
 	struct kingdisplay_panel *kingdisplay = to_kingdisplay_panel(panel);
-
-	if (kingdisplay->enabled)
-		return 0;
 
 	kingdisplay->enabled = true;
 

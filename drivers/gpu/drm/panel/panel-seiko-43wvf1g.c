@@ -126,9 +126,6 @@ static int seiko_panel_disable(struct drm_panel *panel)
 {
 	struct seiko_panel *p = to_seiko_panel(panel);
 
-	if (!p->enabled)
-		return 0;
-
 	p->enabled = false;
 
 	return 0;
@@ -137,9 +134,6 @@ static int seiko_panel_disable(struct drm_panel *panel)
 static int seiko_panel_unprepare(struct drm_panel *panel)
 {
 	struct seiko_panel *p = to_seiko_panel(panel);
-
-	if (!p->prepared)
-		return 0;
 
 	gpiod_set_value_cansleep(p->enable_gpio, 0);
 
@@ -159,9 +153,6 @@ static int seiko_panel_prepare(struct drm_panel *panel)
 {
 	struct seiko_panel *p = to_seiko_panel(panel);
 	int err;
-
-	if (p->prepared)
-		return 0;
 
 	err = regulator_enable(p->dvdd);
 	if (err < 0) {
@@ -192,9 +183,6 @@ disable_dvdd:
 static int seiko_panel_enable(struct drm_panel *panel)
 {
 	struct seiko_panel *p = to_seiko_panel(panel);
-
-	if (p->enabled)
-		return 0;
 
 	p->enabled = true;
 

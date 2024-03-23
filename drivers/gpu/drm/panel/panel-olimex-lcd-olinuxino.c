@@ -82,9 +82,6 @@ static int lcd_olinuxino_disable(struct drm_panel *panel)
 {
 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
 
-	if (!lcd->enabled)
-		return 0;
-
 	lcd->enabled = false;
 
 	return 0;
@@ -93,9 +90,6 @@ static int lcd_olinuxino_disable(struct drm_panel *panel)
 static int lcd_olinuxino_unprepare(struct drm_panel *panel)
 {
 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
-
-	if (!lcd->prepared)
-		return 0;
 
 	gpiod_set_value_cansleep(lcd->enable_gpio, 0);
 	regulator_disable(lcd->supply);
@@ -110,9 +104,6 @@ static int lcd_olinuxino_prepare(struct drm_panel *panel)
 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
 	int ret;
 
-	if (lcd->prepared)
-		return 0;
-
 	ret = regulator_enable(lcd->supply);
 	if (ret < 0)
 		return ret;
@@ -126,9 +117,6 @@ static int lcd_olinuxino_prepare(struct drm_panel *panel)
 static int lcd_olinuxino_enable(struct drm_panel *panel)
 {
 	struct lcd_olinuxino *lcd = to_lcd_olinuxino(panel);
-
-	if (lcd->enabled)
-		return 0;
 
 	lcd->enabled = true;
 

@@ -37,9 +37,6 @@ static int osd101t2587_panel_disable(struct drm_panel *panel)
 	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
 	int ret;
 
-	if (!osd101t2587->enabled)
-		return 0;
-
 	ret = mipi_dsi_shutdown_peripheral(osd101t2587->dsi);
 
 	osd101t2587->enabled = false;
@@ -50,9 +47,6 @@ static int osd101t2587_panel_disable(struct drm_panel *panel)
 static int osd101t2587_panel_unprepare(struct drm_panel *panel)
 {
 	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
-
-	if (!osd101t2587->prepared)
-		return 0;
 
 	regulator_disable(osd101t2587->supply);
 	osd101t2587->prepared = false;
@@ -65,9 +59,6 @@ static int osd101t2587_panel_prepare(struct drm_panel *panel)
 	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
 	int ret;
 
-	if (osd101t2587->prepared)
-		return 0;
-
 	ret = regulator_enable(osd101t2587->supply);
 	if (!ret)
 		osd101t2587->prepared = true;
@@ -79,9 +70,6 @@ static int osd101t2587_panel_enable(struct drm_panel *panel)
 {
 	struct osd101t2587_panel *osd101t2587 = ti_osd_panel(panel);
 	int ret;
-
-	if (osd101t2587->enabled)
-		return 0;
 
 	ret = mipi_dsi_turn_on_peripheral(osd101t2587->dsi);
 	if (ret)

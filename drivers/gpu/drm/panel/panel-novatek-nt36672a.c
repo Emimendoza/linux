@@ -119,9 +119,6 @@ static int nt36672a_panel_unprepare(struct drm_panel *panel)
 	struct nt36672a_panel *pinfo = to_nt36672a_panel(panel);
 	int ret;
 
-	if (!pinfo->prepared)
-		return 0;
-
 	/* send off cmds */
 	ret = nt36672a_send_cmds(panel, pinfo->desc->off_cmds,
 				 pinfo->desc->num_off_cmds);
@@ -178,9 +175,6 @@ static int nt36672a_panel_prepare(struct drm_panel *panel)
 {
 	struct nt36672a_panel *pinfo = to_nt36672a_panel(panel);
 	int err;
-
-	if (pinfo->prepared)
-		return 0;
 
 	err = nt36672a_panel_power_on(pinfo);
 	if (err < 0)

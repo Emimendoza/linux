@@ -89,9 +89,6 @@ static int sharp_panel_disable(struct drm_panel *panel)
 {
 	struct sharp_panel *sharp = to_sharp_panel(panel);
 
-	if (!sharp->enabled)
-		return 0;
-
 	sharp->enabled = false;
 
 	return 0;
@@ -101,9 +98,6 @@ static int sharp_panel_unprepare(struct drm_panel *panel)
 {
 	struct sharp_panel *sharp = to_sharp_panel(panel);
 	int err;
-
-	if (!sharp->prepared)
-		return 0;
 
 	sharp_wait_frames(sharp, 4);
 
@@ -163,9 +157,6 @@ static int sharp_panel_prepare(struct drm_panel *panel)
 	struct sharp_panel *sharp = to_sharp_panel(panel);
 	u8 format = MIPI_DCS_PIXEL_FMT_24BIT;
 	int err;
-
-	if (sharp->prepared)
-		return 0;
 
 	err = regulator_enable(sharp->supply);
 	if (err < 0)
@@ -250,9 +241,6 @@ poweroff:
 static int sharp_panel_enable(struct drm_panel *panel)
 {
 	struct sharp_panel *sharp = to_sharp_panel(panel);
-
-	if (sharp->enabled)
-		return 0;
 
 	sharp->enabled = true;
 
