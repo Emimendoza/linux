@@ -139,10 +139,6 @@ static int atana33xc20_disable(struct drm_panel *panel)
 {
 	struct atana33xc20_panel *p = to_atana33xc20(panel);
 
-	/* Disabling when already disabled is a no-op */
-	if (!p->enabled)
-		return 0;
-
 	gpiod_set_value_cansleep(p->el_on3_gpio, 0);
 	p->el_on3_off_time = ktime_get_boottime();
 	p->enabled = false;
@@ -168,10 +164,6 @@ static int atana33xc20_disable(struct drm_panel *panel)
 static int atana33xc20_enable(struct drm_panel *panel)
 {
 	struct atana33xc20_panel *p = to_atana33xc20(panel);
-
-	/* Enabling when already enabled is a no-op */
-	if (p->enabled)
-		return 0;
 
 	/*
 	 * Once EL_ON3 drops we absolutely need a power cycle before the next
@@ -201,10 +193,6 @@ static int atana33xc20_unprepare(struct drm_panel *panel)
 	struct atana33xc20_panel *p = to_atana33xc20(panel);
 	int ret;
 
-	/* Unpreparing when already unprepared is a no-op */
-	if (!p->prepared)
-		return 0;
-
 	/*
 	 * Purposely do a put_sync, don't use autosuspend. The panel's tcon
 	 * seems to sometimes crash when you stop giving it data and this is
@@ -225,10 +213,6 @@ static int atana33xc20_prepare(struct drm_panel *panel)
 {
 	struct atana33xc20_panel *p = to_atana33xc20(panel);
 	int ret;
-
-	/* Preparing when already prepared is a no-op */
-	if (p->prepared)
-		return 0;
 
 	ret = pm_runtime_get_sync(panel->dev);
 	if (ret < 0) {
