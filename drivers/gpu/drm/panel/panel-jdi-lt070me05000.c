@@ -176,9 +176,6 @@ static int jdi_panel_disable(struct drm_panel *panel)
 {
 	struct jdi_panel *jdi = to_jdi_panel(panel);
 
-	if (!jdi->enabled)
-		return 0;
-
 	backlight_disable(jdi->backlight);
 
 	jdi->enabled = false;
@@ -191,9 +188,6 @@ static int jdi_panel_unprepare(struct drm_panel *panel)
 	struct jdi_panel *jdi = to_jdi_panel(panel);
 	struct device *dev = &jdi->dsi->dev;
 	int ret;
-
-	if (!jdi->prepared)
-		return 0;
 
 	jdi_panel_off(jdi);
 
@@ -217,9 +211,6 @@ static int jdi_panel_prepare(struct drm_panel *panel)
 	struct jdi_panel *jdi = to_jdi_panel(panel);
 	struct device *dev = &jdi->dsi->dev;
 	int ret;
-
-	if (jdi->prepared)
-		return 0;
 
 	ret = regulator_bulk_enable(ARRAY_SIZE(jdi->supplies), jdi->supplies);
 	if (ret < 0) {
@@ -271,9 +262,6 @@ poweroff:
 static int jdi_panel_enable(struct drm_panel *panel)
 {
 	struct jdi_panel *jdi = to_jdi_panel(panel);
-
-	if (jdi->enabled)
-		return 0;
 
 	backlight_enable(jdi->backlight);
 
