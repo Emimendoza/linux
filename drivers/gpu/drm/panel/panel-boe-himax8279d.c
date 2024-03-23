@@ -86,9 +86,6 @@ static int boe_panel_disable(struct drm_panel *panel)
 	struct panel_info *pinfo = to_panel_info(panel);
 	int err;
 
-	if (!pinfo->enabled)
-		return 0;
-
 	err = mipi_dsi_dcs_set_display_off(pinfo->link);
 	if (err < 0) {
 		dev_err(panel->dev, "failed to set display off: %d\n", err);
@@ -104,9 +101,6 @@ static int boe_panel_unprepare(struct drm_panel *panel)
 {
 	struct panel_info *pinfo = to_panel_info(panel);
 	int err;
-
-	if (!pinfo->prepared)
-		return 0;
 
 	err = mipi_dsi_dcs_set_display_off(pinfo->link);
 	if (err < 0)
@@ -130,9 +124,6 @@ static int boe_panel_prepare(struct drm_panel *panel)
 {
 	struct panel_info *pinfo = to_panel_info(panel);
 	int err;
-
-	if (pinfo->prepared)
-		return 0;
 
 	gpiod_set_value(pinfo->pp18_gpio, 1);
 	/* T1: 5ms - 6ms */
@@ -193,9 +184,6 @@ static int boe_panel_enable(struct drm_panel *panel)
 {
 	struct panel_info *pinfo = to_panel_info(panel);
 	int ret;
-
-	if (pinfo->enabled)
-		return 0;
 
 	usleep_range(120000, 121000);
 
