@@ -55,9 +55,6 @@ static int wuxga_nt_panel_disable(struct drm_panel *panel)
 	struct wuxga_nt_panel *wuxga_nt = to_wuxga_nt_panel(panel);
 	int mipi_ret, bl_ret = 0;
 
-	if (!wuxga_nt->enabled)
-		return 0;
-
 	mipi_ret = mipi_dsi_shutdown_peripheral(wuxga_nt->dsi);
 
 	wuxga_nt->enabled = false;
@@ -68,9 +65,6 @@ static int wuxga_nt_panel_disable(struct drm_panel *panel)
 static int wuxga_nt_panel_unprepare(struct drm_panel *panel)
 {
 	struct wuxga_nt_panel *wuxga_nt = to_wuxga_nt_panel(panel);
-
-	if (!wuxga_nt->prepared)
-		return 0;
 
 	regulator_disable(wuxga_nt->supply);
 	wuxga_nt->earliest_wake = ktime_add_ms(ktime_get_real(), MIN_POFF_MS);
@@ -84,9 +78,6 @@ static int wuxga_nt_panel_prepare(struct drm_panel *panel)
 	struct wuxga_nt_panel *wuxga_nt = to_wuxga_nt_panel(panel);
 	int ret;
 	s64 enablewait;
-
-	if (wuxga_nt->prepared)
-		return 0;
 
 	/*
 	 * If the user re-enabled the panel before the required off-time then
@@ -130,9 +121,6 @@ poweroff:
 static int wuxga_nt_panel_enable(struct drm_panel *panel)
 {
 	struct wuxga_nt_panel *wuxga_nt = to_wuxga_nt_panel(panel);
-
-	if (wuxga_nt->enabled)
-		return 0;
 
 	wuxga_nt->enabled = true;
 
