@@ -65,9 +65,6 @@ static int innolux_panel_disable(struct drm_panel *panel)
 {
 	struct innolux_panel *innolux = to_innolux_panel(panel);
 
-	if (!innolux->enabled)
-		return 0;
-
 	innolux->enabled = false;
 
 	return 0;
@@ -77,9 +74,6 @@ static int innolux_panel_unprepare(struct drm_panel *panel)
 {
 	struct innolux_panel *innolux = to_innolux_panel(panel);
 	int err;
-
-	if (!innolux->prepared)
-		return 0;
 
 	err = mipi_dsi_dcs_set_display_off(innolux->link);
 	if (err < 0)
@@ -113,9 +107,6 @@ static int innolux_panel_prepare(struct drm_panel *panel)
 {
 	struct innolux_panel *innolux = to_innolux_panel(panel);
 	int err;
-
-	if (innolux->prepared)
-		return 0;
 
 	gpiod_set_value_cansleep(innolux->enable_gpio, 0);
 
@@ -192,9 +183,6 @@ poweroff:
 static int innolux_panel_enable(struct drm_panel *panel)
 {
 	struct innolux_panel *innolux = to_innolux_panel(panel);
-
-	if (innolux->enabled)
-		return 0;
 
 	innolux->enabled = true;
 
