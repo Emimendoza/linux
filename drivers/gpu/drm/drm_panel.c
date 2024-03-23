@@ -114,7 +114,9 @@ int drm_panel_prepare(struct drm_panel *panel)
 		return -EINVAL;
 
 	if (panel->prepared) {
-		dev_warn(panel->dev, "Skipping prepare of already prepared panel\n");
+		const char *name = dev_name(panel->dev);
+
+		WARN(1, "Unexpected attempt to prepare an already prepared panel by %s\n", name);
 		return 0;
 	}
 
@@ -162,7 +164,9 @@ int drm_panel_unprepare(struct drm_panel *panel)
 		return -EINVAL;
 
 	if (!panel->prepared) {
-		dev_warn(panel->dev, "Skipping unprepare of already unprepared panel\n");
+		const char *name = dev_name(panel->dev);
+
+		WARN(1, "Unexpected attempt to unprepare an already unprepared panel by %s\n", name);
 		return 0;
 	}
 
@@ -208,7 +212,9 @@ int drm_panel_enable(struct drm_panel *panel)
 		return -EINVAL;
 
 	if (panel->enabled) {
-		dev_warn(panel->dev, "Skipping enable of already enabled panel\n");
+		const char *name = dev_name(panel->dev);
+
+		WARN(1, "Unexpected attempt to enable an already enabled panel by %s\n", name);
 		return 0;
 	}
 
@@ -246,7 +252,9 @@ int drm_panel_disable(struct drm_panel *panel)
 		return -EINVAL;
 
 	if (!panel->enabled) {
-		dev_warn(panel->dev, "Skipping disable of already disabled panel\n");
+		const char *name = dev_name(panel->dev);
+
+		WARN(1, "Unexpected attempt to disable an already disabled panel by %s\n", name);
 		return 0;
 	}
 
