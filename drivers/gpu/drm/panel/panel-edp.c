@@ -225,10 +225,7 @@ struct edp_panel_entry {
 
 struct panel_edp {
 	struct drm_panel base;
-	bool enabled;
 	bool no_hpd;
-
-	bool prepared;
 
 	ktime_t prepared_time;
 	ktime_t powered_on_time;
@@ -398,13 +395,8 @@ static int panel_edp_disable(struct drm_panel *panel)
 {
 	struct panel_edp *p = to_panel_edp(panel);
 
-	if (!p->enabled)
-		return 0;
-
 	if (p->desc->delay.disable)
 		msleep(p->desc->delay.disable);
-
-	p->enabled = false;
 
 	return 0;
 }
@@ -423,17 +415,11 @@ static int panel_edp_suspend(struct device *dev)
 
 static int panel_edp_unprepare(struct drm_panel *panel)
 {
-	struct panel_edp *p = to_panel_edp(panel);
 	int ret;
-
-	/* Unpreparing when already unprepared is a no-op */
-	if (!p->prepared)
-		return 0;
 
 	ret = pm_runtime_put_sync_suspend(panel->dev);
 	if (ret < 0)
 		return ret;
-	p->prepared = false;
 
 	return 0;
 }
@@ -545,20 +531,13 @@ static int panel_edp_resume(struct device *dev)
 
 static int panel_edp_prepare(struct drm_panel *panel)
 {
-	struct panel_edp *p = to_panel_edp(panel);
 	int ret;
-
-	/* Preparing when already prepared is a no-op */
-	if (p->prepared)
-		return 0;
 
 	ret = pm_runtime_get_sync(panel->dev);
 	if (ret < 0) {
 		pm_runtime_put_autosuspend(panel->dev);
 		return ret;
 	}
-
-	p->prepared = true;
 
 	return 0;
 }
@@ -567,9 +546,6 @@ static int panel_edp_enable(struct drm_panel *panel)
 {
 	struct panel_edp *p = to_panel_edp(panel);
 	unsigned int delay;
-
-	if (p->enabled)
-		return 0;
 
 	delay = p->desc->delay.enable;
 
@@ -600,8 +576,6 @@ static int panel_edp_enable(struct drm_panel *panel)
 	panel_edp_wait(p->prepared_time, p->desc->delay.prepare_to_enable);
 
 	panel_edp_wait(p->powered_on_time, p->desc->delay.powered_on_to_enable);
-
-	p->enabled = true;
 
 	return 0;
 }
@@ -862,7 +836,6 @@ static int panel_edp_probe(struct device *dev, const struct panel_desc *desc,
 	if (!panel)
 		return -ENOMEM;
 
-	panel->enabled = false;
 	panel->prepared_time = 0;
 	panel->desc = desc;
 	panel->aux = aux;
